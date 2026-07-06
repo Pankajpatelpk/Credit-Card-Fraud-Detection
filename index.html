@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraud Detection App</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    /* font-weight: 400; */
+}
+
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.933);
+    padding: 25px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+label {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+    font-size: 14px;
+}
+/* this is for dropdown */
+select#merchant_category {
+    width: 100%; /* full width */
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* rounded corners */
+    font-size: 14px;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+    appearance: none; /* remove default arrow in some browsers */
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* Hover effect */
+select#merchant_category:hover {
+    border-color: #007BFF;
+}
+
+/* Focus effect */
+select#merchant_category:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Optional: custom arrow using background image */
+select#merchant_category {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 13px;
+    margin-bottom: 3px;
+    color: #555;
+    font-weight: 600;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102,126,234,0.5);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.checkbox-group input {
+    width: auto;
+    margin-right: 8px;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.result {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.success {
+    color: green;
+}
+
+.fraud {
+    color: red;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 500px) {
+    .container {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h2>💳 Credit Card Fraud Detection</h2>
+<form id="form">
+    <label>Amount</label>
+    <input type="number" id="amount" required>
+
+    <label>Transaction Hour</label>
+    <input type="number" id="transaction_hour" required>
+
+    <!-- <label>Merchant Category</label>
+    <input type="text" id="merchant_category" required> -->
+
+    <label for="merchant_category">Merchant Category</label>
+    <select id="merchant_category" required>
+        <option value="" disabled selected>Select a category</option>
+        <option value="Food">Food</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Travel">Travel</option>
+        <option value="Grocery">Grocery</option>
+        <option value="Electronics">Electronics</option>
+    </select>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="foreign_transaction">
+        <label>Foreign Transaction</label>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="location_mismatch">
+        <label>Location Mismatch</label>
+    </div>
+
+    <label>Device Trust Score</label>
+    <input type="number" id="device_trust_score" required>
+
+    <label>Velocity Last 24h</label>
+    <input type="number" id="velocity_last_24h" required>
+
+    <label>Cardholder Age</label>
+    <input type="number" id="cardholder_age" required>
+
+    <button type="submit">🚀 Predict</button>
+</form>
+
+<div class="result" id="result"></div>
+</div>
+
+<script>
+document.getElementById("form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const data = {
+        amount: parseFloat(document.getElementById("amount").value),
+        transaction_hour: parseInt(document.getElementById("transaction_hour").value),
+        merchant_category: document.getElementById("merchant_category").value,
+        foreign_transaction: document.getElementById("foreign_transaction").checked,
+        location_mismatch: document.getElementById("location_mismatch").checked,
+        device_trust_score: parseInt(document.getElementById("device_trust_score").value),
+        velocity_last_24h: parseInt(document.getElementById("velocity_last_24h").value),
+        cardholder_age: parseInt(document.getElementById("cardholder_age").value)
+    };
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerText = "⏳ Predicting...";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        const prediction = result["prediction of fraud"][0];
+
+        if (prediction === 1) {
+            resultDiv.innerText = "🚨 Fraud Detected!";
+            resultDiv.className = "result fraud";
+        } else {
+            resultDiv.innerText = "✅ Safe Transaction";
+            resultDiv.className = "result success";
+        }
+
+    } catch (error) {
+        resultDiv.innerText = "❌ API Error";
+    }
+});
+</script>
+</body>
+</html>
+
+
