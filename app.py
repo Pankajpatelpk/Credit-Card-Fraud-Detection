@@ -46,4 +46,3 @@ def predict(data: InputCheck):
     trf_data = transform.transform(df)
     prediction = model.predict(trf_data)
     return JSONResponse(status_code=200, content={'prediction of fraud': prediction.tolist()}) 
-# myvenv\Scripts\activate
