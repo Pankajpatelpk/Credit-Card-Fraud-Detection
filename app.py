@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from typing import Annotated
+from pydantic import BaseModel,Field
 import pickle
 from xgboost import XGBClassifier
 import numpy as np
@@ -31,14 +32,14 @@ def home():
     return {'message':'This is the home page of my api'}
 
 class InputCheck(BaseModel):
-    amount:float
-    transaction_hour:int
+    amount:Annotated[float,Field(...,gt=0)]
+    transaction_hour:Annotated[int,Field(...,gt=0,le=23)]
     merchant_category:str
     foreign_transaction:bool
     location_mismatch:bool
     device_trust_score:int
-    velocity_last_24h:int
-    cardholder_age:int
+    velocity_last_24h:Annotated[int,Field(...,gt=0)]
+    cardholder_age:Annotated[int,Field(...,gt=0)]
 
 @app.post('/predict')
 def predict(data: InputCheck):

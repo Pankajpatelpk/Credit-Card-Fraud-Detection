@@ -180,10 +180,15 @@ button:hover {
     <h2>💳 Credit Card Fraud Detection</h2>
 <form id="form">
     <label>Amount</label>
-    <input type="number" id="amount" required>
+    <input type="number" id="amount" 
+    min="0"
+    required>
 
     <label>Transaction Hour</label>
-    <input type="number" id="transaction_hour" required>
+    <input type="number" id="transaction_hour" 
+    min="0"
+    max="23"
+    required>
 
     <!-- <label>Merchant Category</label>
     <input type="text" id="merchant_category" required> -->
@@ -209,13 +214,20 @@ button:hover {
     </div>
 
     <label>Device Trust Score</label>
-    <input type="number" id="device_trust_score" required>
+    <input type="number" id="device_trust_score"
+    min="0" 
+    max="99"
+    required>
 
     <label>Velocity Last 24h</label>
-    <input type="number" id="velocity_last_24h" required>
+    <input type="number" id="velocity_last_24h" 
+    min="0"
+    required>
 
     <label>Cardholder Age</label>
-    <input type="number" id="cardholder_age" required>
+    <input type="number" id="cardholder_age" 
+    min="0"
+    required>
 
     <button type="submit">🚀 Predict</button>
 </form>
@@ -261,7 +273,7 @@ document.getElementById("form").addEventListener("submit", async function(e) {
             resultDiv.innerText = "✅ Safe Transaction";
             resultDiv.className = "result success";
         }
-
+        
     } catch (error) {
         resultDiv.innerText = "❌ API Error";
     }
