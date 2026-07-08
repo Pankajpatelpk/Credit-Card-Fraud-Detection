@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse,FileResponse
 from typing import Annotated
 from pydantic import BaseModel,Field
 import pickle
@@ -29,8 +29,7 @@ with open('transformation.pkl','rb') as f:
 
 @app.get('/')
 def home():
-    return {'message':'This is the home page of my api'}
-
+    return FileResponse("index.html")
 class InputCheck(BaseModel):
     amount:Annotated[float,Field(...,gt=0)]
     transaction_hour:Annotated[int,Field(...,gt=0,le=23)]
