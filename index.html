@@ -18,8 +18,9 @@ body {
     background: linear-gradient(135deg, #667eea, #764ba2);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center; 
 }
 
 .container {
@@ -147,6 +148,29 @@ button:hover {
 .fraud {
     color: red;
 }
+.resultCard{
+    display:none;
+}
+.result-fraud{
+    background: rgba(255, 255, 255, 0.933);
+    padding: 25px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease-in-out;
+    margin: 20px;
+}
+.result-success{
+    background: rgba(255, 255, 255, 0.933);
+    padding: 25px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease-in-out;
+    margin: 20px;
+}
 
 @keyframes fadeIn {
     from {
@@ -219,7 +243,7 @@ button:hover {
     max="99"
     required>
 
-    <label>Velocity Last 24h</label>
+    <label>Transactions in Past 24 Hours</label>
     <input type="number" id="velocity_last_24h" 
     min="0"
     required>
@@ -231,9 +255,11 @@ button:hover {
 
     <button type="submit">🚀 Predict</button>
 </form>
-
-<div class="result" id="result"></div>
 </div>
+
+<!-- ============================ ye ek result ke liye card hai ==================================== -->
+ <div class="resultCard"></div>
+
 
 <script>
 document.getElementById("form").addEventListener("submit", async function(e) {
@@ -249,12 +275,13 @@ document.getElementById("form").addEventListener("submit", async function(e) {
         velocity_last_24h: parseInt(document.getElementById("velocity_last_24h").value),
         cardholder_age: parseInt(document.getElementById("cardholder_age").value)
     };
-
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerText = "⏳ Predicting...";
+    const res=document.querySelector(".resultCard")
+    res.style.display="block"
+    // const resultDiv = document.getElementById("result");
+    res.innerText = "⏳ Predicting...";
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/predict", {
+        const response = await fetch("/predict", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -267,13 +294,23 @@ document.getElementById("form").addEventListener("submit", async function(e) {
         const prediction = result["prediction of fraud"][0];
 
         if (prediction === 1) {
-            resultDiv.innerText = "🚨 Fraud Detected!";
-            resultDiv.className = "result fraud";
+            res.innerHTML = `
+                <div class="result-fraud">
+                    <h2>🚨 Fraud Detected!</h2>
+                    <p>This transaction looks suspicious.</p>
+                    <button>View Details</button>
+                </div>
+            `;
         } else {
-            resultDiv.innerText = "✅ Safe Transaction";
-            resultDiv.className = "result success";
-        }
-        
+            res.innerHTML = `
+                <div class="result-success">
+                    <h2>✅ Safe Transaction</h2>
+                    <p>This transaction appears to be legitimate.</p>
+                    <button>Continue</button>
+                </div>
+            `;
+}
+
     } catch (error) {
         resultDiv.innerText = "❌ API Error";
     }
