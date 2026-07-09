@@ -45,4 +45,10 @@ def predict(data: InputCheck):
     df = pd.DataFrame([data.dict()])
     trf_data = transform.transform(df)
     prediction = model.predict(trf_data)
-    return JSONResponse(status_code=200, content={'prediction of fraud': prediction.tolist()}) 
+    prob=model.predict_proba(trf_data)
+    confidence = float(np.max(prob) * 100)
+    return JSONResponse(status_code=200, 
+                        content={
+                            'prediction of fraud': prediction.tolist(),
+                            'confidence_score':round(confidence,2)
+                        }) 

@@ -290,14 +290,17 @@ document.getElementById("form").addEventListener("submit", async function(e) {
         });
 
         const result = await response.json();
+        console.log(result)
 
         const prediction = result["prediction of fraud"][0];
+        const confidence =result["confidence_score"];
 
         if (prediction === 1) {
             res.innerHTML = `
                 <div class="result-fraud">
                     <h2>🚨 Fraud Detected!</h2>
                     <p>This transaction looks suspicious.</p>
+                    <p><strong>Confidence Score: ${confidence}</strong></p>
                     <button>View Details</button>
                 </div>
             `;
@@ -306,6 +309,7 @@ document.getElementById("form").addEventListener("submit", async function(e) {
                 <div class="result-success">
                     <h2>✅ Safe Transaction</h2>
                     <p>This transaction appears to be legitimate.</p>
+                    <p><strong>Confidence Score: ${confidence}</strong></p>
                     <button>Continue</button>
                 </div>
             `;
