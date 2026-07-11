@@ -301,7 +301,20 @@ document.getElementById("form").addEventListener("submit", async function(e) {
                     <h2>🚨 Fraud Detected!</h2>
                     <p>This transaction looks suspicious.</p>
                     <p><strong>Confidence Score: ${confidence}</strong></p>
-                    <button>View Details</button>
+                    <button id="view_detail">View Details</button>
+
+                    <div id="details" style="display:none; margin:15px;">
+                    <p>Risk level is high please <strong>decline</strong> the transaction.</p>
+                    </br>
+                     <h4>🔍 Why was this transaction flagged?</h4>
+                    <ul>
+                        <li>📱 Low Device Trust Score</li>
+                        <li>🕒 Late Night Transaction</li>
+                    </ul>
+                    </br>
+                    <h4>🛡 Recommended Action</h4>
+                    <p>Temporarily decline the transaction and verify the cardholder.</p>
+                    </div>
                 </div>
             `;
         } else {
@@ -310,10 +323,27 @@ document.getElementById("form").addEventListener("submit", async function(e) {
                     <h2>✅ Safe Transaction</h2>
                     <p>This transaction appears to be legitimate.</p>
                     <p><strong>Confidence Score: ${confidence}</strong></p>
-                    <button>Continue</button>
+                    <button id="view_detail">View Details</button>
+
+                    <div id="details" style="display:none; margin:15px;">
+                    <p>Your safe so please <strong>continue</strong> your transaction.</p>
                 </div>
             `;
 }
+     const btn=document.getElementById("view_detail")
+     const details=document.getElementById("details")
+
+     btn.addEventListener("click",function(){
+     
+        if(details.style.display==="none"){
+            details.style.display="block"
+            btn.innerText="Hide Details"
+        }
+        else {
+            details.style.display="none"
+            btn.innerText="View Details"
+        }
+     })
 
     } catch (error) {
     res.innerHTML = `
